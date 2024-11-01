@@ -18,4 +18,4 @@ typedef boost::graph_traits<Graph>::edge_descriptor Edge;
 
 void parse_and_add_to_graph(const std::string& json_str, Graph& g, std::map<std::string, Vertex>& vertex_map);
 std::string mock_api_data();
-void perform_arbitrage(const char* currency_pair);
+void perform_arbitrage();

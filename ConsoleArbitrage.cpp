@@ -1,40 +1,33 @@
 // ConsoleArbitrage.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include "ConsoleArbitrage.h";
+#include "ConsoleArbitrage.h"
 #include "ArbitrageLogic.h"
 #include <iostream>
-#include <string>
 #include <vector>
 
-// Declare Global variables
+// Declare Variables
 std::vector<std::string> currencies = { "USD", "EUR", "JPY" };   // example
+std::vector<std::string> options_list = { "Quit", "Arbitrage" };
 std::string currency = "USD"; 
 std::string default_currency = "USD";
 double initial_capital = 0.00;
 double capital = 0.00;
 bool quit = false;
+Graph currency_graph;
+std::map<std::string, Vertex> vertex_map;
 
-// Declare Functions
-void select_currency();
-void list_currencies();
-std::string get_currency();
-void set_initial_capital(double initial_capital);
-double get_initial_capital();
-void show_initial_capital();
-void set_capital(double new_capital);
-double get_capital();
-void display_status();
-bool quit_question();
-void ending_status();
 
 int main(){
     // Parse data
     select_currency();
     show_initial_capital();
     display_status();
+    parse_and_add_to_graph(mock_api_data(), currency_graph, vertex_map);
     while (quit == false) {
-        quit = quit_question();
+        // quit = quit_question();
+        // perform_arbitrage();
+        options();
     }
     ending_status();
 }
@@ -67,6 +60,7 @@ void select_currency() {
                     std::cout << "Invalid confirmation. Please enter Y or N.\n";
                 } else if (confirm_choice == "N" || confirm_choice == "n") {
                     currency = default_currency;
+                    std::cout << "\nReverted to Default Currency: " << currency + "\n";
                     display_status();
                 }
             } else {
@@ -126,6 +120,59 @@ static double calculate_change() {
 
 static void display_change() {
     std::cout << "\tChange: " << calculate_change();
+}
+
+void options() {
+    int option_choice;
+    std::string confirm_choice = " ";
+    std::string oChoice = " ";
+    while (oChoice != "N" && oChoice != "n") {
+            list_options();
+            std::cout << "Enter the number corresponding to your option choice: ";
+            std::cin >> option_choice;
+            // Confirm currency_choice within bounds
+            if (option_choice > 0 && option_choice < currencies.size() + 1) {
+                oChoice = options_list[option_choice - 1];
+                std::cout << "Selected Choice: " << oChoice + "\n";
+
+                // Obtain user confirmation
+                std::cout << "Confirm (Y/N): ";
+                std::cin >> confirm_choice;
+                if (confirm_choice == "Y" || confirm_choice == "y") {
+                    display_status();
+                    option_switch(option_choice);
+                    break;
+                }
+                else if (confirm_choice != "N" && confirm_choice != "n") {
+                    std::cout << "Invalid confirmation. Please enter Y or N.\n";
+                }
+                else if (confirm_choice == "N" || confirm_choice == "n") {
+                    display_status();
+                }
+            }
+            else {
+                std::cout << "Invalid currency.\n\nCurrent currency : " << currency + "\n";
+            }
+    }
+}
+
+void list_options(){
+    std::cout << "Options:\n";
+    for (int i = 0; i < options_list.size(); i++) {
+        std::cout << "\t" << (i + 1) << ". " << options_list[i] << "\n";
+    }
+}
+
+void option_switch(int option_choice) {
+    switch (option_choice) {
+        case 1:
+            quit = quit_question();
+        case 2:
+            perform_arbitrage();
+        default:
+            std::cout << "Invalid option. Select an option shown.\n";
+            break;
+    }
 }
 
 bool quit_question() {

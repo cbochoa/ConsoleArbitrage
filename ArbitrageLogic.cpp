@@ -67,7 +67,7 @@ void parse_and_add_to_graph(const std::string& json_str, Graph& g, std::map<std:
 
 // Main function to find arbitrage opportunity
 // From USD to USD Only at this time, will add ability to choose starting and ending 
-void perform_arbitrage(const char* currency_pair) {
+void perform_arbitrage() {
     std::string json_data = mock_api_data();
 
     Graph g;
